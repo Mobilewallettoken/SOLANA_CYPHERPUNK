@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Import Project="$(NuGetPackageRoot)sqlitepclraw.lib.e_sqlite3/2.1.2/buildTransitive/net7.0/SQLitePCLRaw.lib.e_sqlite3.targets" Condition="Exists('$(NuGetPackageRoot)sqlitepclraw.lib.e_sqlite3/2.1.2/buildTransitive/net7.0/SQLitePCLRaw.lib.e_sqlite3.targets')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.extensions.logging.abstractions/6.0.0/build/Microsoft.Extensions.Logging.Abstractions.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.extensions.logging.abstractions/6.0.0/build/Microsoft.Extensions.Logging.Abstractions.targets')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.projectreunion.winui/0.5.9/buildTransitive/Microsoft.ProjectReunion.WinUI.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.projectreunion.winui/0.5.9/buildTransitive/Microsoft.ProjectReunion.WinUI.targets')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.projectreunion.foundation/0.5.9/build/Microsoft.ProjectReunion.Foundation.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.projectreunion.foundation/0.5.9/build/Microsoft.ProjectReunion.Foundation.targets')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.projectreunion.dwrite/0.5.9/build/Microsoft.ProjectReunion.DWrite.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.projectreunion.dwrite/0.5.9/build/Microsoft.ProjectReunion.DWrite.targets')" />
+    <Import Project="$(NuGetPackageRoot)microsoft.projectreunion/0.5.9/build/Microsoft.ProjectReunion.targets" Condition="Exists('$(NuGetPackageRoot)microsoft.projectreunion/0.5.9/build/Microsoft.ProjectReunion.targets')" />
+    <Import Project="$(NuGetPackageRoot)materialdesignthemes/4.9.0/build/MaterialDesignThemes.targets" Condition="Exists('$(NuGetPackageRoot)materialdesignthemes/4.9.0/build/MaterialDesignThemes.targets')" />
+    <Import Project="$(NuGetPackageRoot)ironocr/2024.8.21/buildTransitive/net6.0/IronOcr.targets" Condition="Exists('$(NuGetPackageRoot)ironocr/2024.8.21/buildTransitive/net6.0/IronOcr.targets')" />
+  </ImportGroup>
+</Project>
