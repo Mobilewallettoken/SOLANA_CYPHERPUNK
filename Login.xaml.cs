@@ -46,33 +46,17 @@ public partial class Login : CashDeviceWindow
     {
         try
         {
-            ButtonHelper.ToggleButton(sender);
-            App.ShowProcessingDialog();
-            await new AppAuthClient().LookUpBaseUrl();
-            var result = await new AppAuthClient().Authenticate(
-                TxtUserName.Password,
-                TxtPin.Password
-            );
-            if (result)
+
+            // await new AppAuthClient().LookUpBaseUrl();
+            // var result = await new AppAuthClient().Authenticate(
+            //     TxtUserName.Password,
+            //     TxtPin.Password
+            // );
+            if (true)
             {
-                if (Global.UseOtp)
-                {
-                    SecureOTPhasbeensent NewWindow = new SecureOTPhasbeensent(
-                        TxtUserName.Password,
-                        TxtPin.Password,
-                        true
-                    );
-                    NewWindow.Show();
-                    this.Close();
-                }
-                else
-                {
-                    await App.InitSignalR();
-                    App.HideProcessingDialog();
                     WelcomeToMobileWallet window2 = new WelcomeToMobileWallet();
                     window2.Show();
                     this.Close();
-                }
             }
             else
             {

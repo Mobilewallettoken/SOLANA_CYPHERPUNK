@@ -1,0 +1,144 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/gaia/projectsInC/SOLANA_CYPHERPUNK/SOLANA_CYPHERPUNK.csproj": {}
+  },
+  "projects": {
+    "/home/gaia/projectsInC/SOLANA_CYPHERPUNK/SOLANA_CYPHERPUNK.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/gaia/projectsInC/SOLANA_CYPHERPUNK/SOLANA_CYPHERPUNK.csproj",
+        "projectName": "SOLANA_CYPHERPUNK",
+        "projectPath": "/home/gaia/projectsInC/SOLANA_CYPHERPUNK/SOLANA_CYPHERPUNK.csproj",
+        "packagesPath": "/home/gaia/.nuget/packages/",
+        "outputPath": "/home/gaia/projectsInC/SOLANA_CYPHERPUNK/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/gaia/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0-windows"
+        ],
+        "sources": {
+          "/usr/lib/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0-windows7.0": {
+            "targetAlias": "net8.0-windows",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0-windows7.0": {
+          "targetAlias": "net8.0-windows",
+          "dependencies": {
+            "DnsClient": {
+              "target": "Package",
+              "version": "[1.8.0, )"
+            },
+            "Emgu.CV.Bitmap": {
+              "target": "Package",
+              "version": "[4.9.0.5494, )"
+            },
+            "Emgu.CV.runtime.windows": {
+              "target": "Package",
+              "version": "[4.9.0.5494, )"
+            },
+            "Microsoft.AspNet.WebApi.Client": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.AspNetCore.SignalR.Client": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.IdentityModel.Tokens": {
+              "target": "Package",
+              "version": "[8.3.0, )"
+            },
+            "NLog": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
+            "NLog.Schema": {
+              "target": "Package",
+              "version": "[6.0.2, )"
+            },
+            "Python.Runtime": {
+              "target": "Package",
+              "version": "[2.7.9, )"
+            },
+            "Python.Runtime.Windows": {
+              "target": "Package",
+              "version": "[3.7.2, )"
+            },
+            "QRCoder": {
+              "target": "Package",
+              "version": "[1.6.0, )"
+            },
+            "System.IO.Ports": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[8.3.0, )"
+            },
+            "ZXing.Net": {
+              "target": "Package",
+              "version": "[0.16.9, )"
+            },
+            "ZXing.Net.Bindings.EmguCV": {
+              "target": "Package",
+              "version": "[0.16.4, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.19, 8.0.19]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.linux-x64",
+              "version": "[8.0.19, 8.0.19]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.19, 8.0.19]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/lib/dotnet/sdk/9.0.109/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
