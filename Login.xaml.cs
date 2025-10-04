@@ -7,6 +7,10 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using ITL;
 using ITL.Events;
+using MobileWallet.Desktop.API;
+using MobileWallet.Desktop.Atm;
+using MobileWallet.Desktop.Client;
+using MobileWallet.Desktop.Helpers;
 
 namespace MobileWallet.Desktop;
 
@@ -15,10 +19,29 @@ public partial class Login : CashDeviceWindow
     public Login()
     {
         InitializeComponent();
+        if (Global.IsTest)
+        {
+            if (Global.UseV2)
+            {
+                TxtPin.Password = "Lahore123@";
+                TxtUserName.Password = "demov2";
+            }
+            else
+            {
+                TxtPin.Password = "Lahore123@";
+                TxtUserName.Password = "hbit";
+            }
+
+
+        }
+        else
+        {
+            // TxtPin.Password = "Lahore123@";
+            // TxtUserName.Password = "mwplc01";
             TxtPin.Password = "";
             TxtUserName.Password = "";
 
-		
+		}
 
     }
 
@@ -46,17 +69,33 @@ public partial class Login : CashDeviceWindow
     {
         try
         {
-
-            // await new AppAuthClient().LookUpBaseUrl();
-            // var result = await new AppAuthClient().Authenticate(
-            //     TxtUserName.Password,
-            //     TxtPin.Password
-            // );
-            if (true)
+            ButtonHelper.ToggleButton(sender);
+            App.ShowProcessingDialog();
+            await new AppAuthClient().LookUpBaseUrl();
+            var result = await new AppAuthClient().Authenticate(
+                TxtUserName.Password,
+                TxtPin.Password
+            );
+            if (result)
             {
+                if (Global.UseOtp)
+                {
+                    SecureOTPhasbeensent NewWindow = new SecureOTPhasbeensent(
+                        TxtUserName.Password,
+                        TxtPin.Password,
+                        true
+                    );
+                    NewWindow.Show();
+                    this.Close();
+                }
+                else
+                {
+                    await App.InitSignalR();
+                    App.HideProcessingDialog();
                     WelcomeToMobileWallet window2 = new WelcomeToMobileWallet();
                     window2.Show();
                     this.Close();
+                }
             }
             else
             {
