@@ -18,6 +18,7 @@ public class Global
     public static string Username { get; set; } = "";
     public static bool IsFrench => DefaultLanguage == "French";
     public static bool IsCrypto { get; set; } = false;
+    public static bool UseHardware { get; set; } = true;
     public static bool IsCryptoAbove { get; set; } = false;
     public static CryptoNetworkDto SelectedNetwork { get; set; } = null;
     public static string UserAddress { get; set; } = "";
