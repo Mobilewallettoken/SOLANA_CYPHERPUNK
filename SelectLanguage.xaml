@@ -1,0 +1,73 @@
+﻿<Window x:Class="MobileWallet.Desktop.SelectLanguage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        WindowStyle="None"
+        mc:Ignorable="d"
+        Closing="SelectLanguage_OnClosing"
+        Loaded="SelectLanguage_OnLoaded"
+        Title="Select Language" Width="900" Height="1600" WindowState="Maximized">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150" />
+            <RowDefinition Height="150" />
+            <RowDefinition Name="DynamicRow" Height="500" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" Stretch="Fill" Source="./images/back-drop.png " />
+        <Image Grid.Row="0" Width="250" Source="./images/logo.png" />
+        <TextBlock Name="SelectLaunguage" HorizontalAlignment="Center" Grid.Row="1" Margin="0 20 0 0" FontWeight="Bold"
+                   Foreground="#ffffff" FontSize="50" TextWrapping="Wrap" Text="Select Language" />
+        
+        <StackPanel Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Right">
+            <Border Margin="0 0 20 0" HorizontalAlignment="Right" Grid.Row="0" Grid.RowSpan="3" BorderBrush="#5387FC"
+                    BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10">
+                <Button GotFocus="OnGotFocusHandler"
+                        LostFocus="OnLostFocusHandler" Margin="0 0 0 0" Name="English" BorderThickness="0"
+                        Background="Transparent" Foreground="#5387FC" FontWeight="DemiBold" FontSize="35"
+                        Click="Button_Click_2">
+                    English
+                </Button>
+            </Border>
+            <Border Margin="0 50 20 0" HorizontalAlignment="Right" Grid.Row="0" Grid.RowSpan="3" BorderBrush="#5387FC"
+                    BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10">
+                <Button GotFocus="OnGotFocusHandler"
+                        LostFocus="OnLostFocusHandler" Margin="0 0 0 0" Name="french" BorderThickness="0"
+                        Background="Transparent" Foreground="#5387FC" FontWeight="DemiBold" FontSize="35"
+                        Click="Button_Click_3">
+                    Français
+                </Button>
+            </Border>
+        </StackPanel>
+       
+        <Border Visibility="Hidden" Margin="0 720 20 0" HorizontalAlignment="Right" Grid.Row="0" Grid.RowSpan="3"
+                BorderBrush="#5387FC" BorderThickness="4" Width="280" Background="#ffffff" Height="80"
+                CornerRadius="10">
+            <Button Margin="0 0 0 0" Name="btnnext" BorderThickness="0" Background="Transparent" Foreground="#5387FC"
+                    FontWeight="DemiBold" FontSize="35"
+                    Click="btnnext_Click">
+                Next
+            </Button>
+        </Border>
+        <StackPanel Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left">
+            <Border Margin="20 00 0 0" HorizontalAlignment="Left" Grid.Row="0" Grid.RowSpan="3" BorderBrush="#5387FC"
+                    BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10">
+                <Button Margin="0 0 0 0" Name="Back" BorderThickness="0" Background="Transparent" Foreground="#5387FC"
+                        FontWeight="DemiBold" FontSize="35"
+                        Click="Button_Click_Back">
+                    Back
+                </Button>
+            </Border>
+            <Border Margin="20 50 0 0" HorizontalAlignment="Left" Grid.Row="0" Grid.RowSpan="3" BorderBrush="#FC5353"
+                    BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10">
+                <Button Margin="0 0 0 0" Name="Cancel" BorderThickness="0" Background="Transparent" FontWeight="DemiBold"
+                        Foreground="#FC5353" FontSize="35"
+                        Click="Button_Click_1_Cancel">
+                    Cancel
+                </Button>
+            </Border>
+        </StackPanel>
+       
+    </Grid>
+</Window>
