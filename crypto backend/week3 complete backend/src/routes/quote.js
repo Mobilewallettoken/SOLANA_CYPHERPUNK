@@ -5,40 +5,25 @@ const { getSettings } = require('../utils/settingsHelper');
 const {
     getSolanaQuote,
     getSolanaTokens,
-    get1InchQuote,
-    get1InchTokens,
+    
     getAmountWithDecimals,
 } = require('../utils/getQuotation');
 const TokenMetadata = require('../models/tokenMetadata');
 const Quote = require('../models/quote');
-const bitcoin = require('bitcoinjs-lib');
 const {
-    evm,
-    transferTokens,
-    checkBNBBalance,
-    checkTokenBalance,
-    nativeTransfer,
-    signerAdmin,
-    removeGasFeeFromBalance,
-    transferGasFeeTorecepient,
-    generateSigner,
+    
     solGenerate,
     walletSolAdmin,
     sol_connection,
     getTokenBalancesSol,
     isValidSolanaAddress,
-    isValidEvm,
     formatDecimal,
 } = require('../utils/utils');
-const { swapOneInch } = require('../utils/swapBsc');
-const { swapSolana, transferToken, transferSol } = require('../utils/swapSolana');
+const {  transferToken, transferSol } = require('../utils/swapSolana');
 const { PublicKey, Keypair } = require('@solana/web3.js');
 const { Wallet } = require('@project-serum/anchor');
 const { ethers } = require('ethers');
-const { parseUnits } = require('ethers/lib/utils');
 const bs58 = require('bs58').default;
-const { coinMarketCapConvertBTC, BTCWallet } = require('../utils/btc_utils');
-const { btcTransfer, btcconfirmTransfer, btcMidTransfer } = require('../utils/swapBtc');
 
 /**
  * @swagger
@@ -86,7 +71,7 @@ const { btcTransfer, btcconfirmTransfer, btcMidTransfer } = require('../utils/sw
  *                   example: '2.5%'
  *                 quote:
  *                   type: number
- *                   description: The quote for Solana or BSC
+ *                   description: The quote for Solana
  *                   example: 200.50
  *                 paymentMethod:
  *                   type: string
@@ -139,110 +124,71 @@ const { btcTransfer, btcconfirmTransfer, btcMidTransfer } = require('../utils/sw
  *                   type: string
  *                   example: 'Internal Server Error'
  */
-router.get('/buy', async (req, res) => {
+router.get("/buy", async (req, res) => {
     const { fiatCurrencyCode, amount, cryptoCurrencyAddress } = req.query;
-    const slippage = '20';
+    const slippage = "20";
 
     if (!fiatCurrencyCode || !amount || !cryptoCurrencyAddress) {
-        return res
-            .status(400)
-            .json({ error: 'Currency code, amount, chain and cryptoCurrencyAddress are required' });
+        return res.status(400).json({
+            error:
+                "Currency code, amount, chain and cryptoCurrencyAddress are required",
+        });
     }
 
     try {
         // Get settings for dynamic admin fee
         const settings = await getSettings();
-        
+
         let convertedValue;
-        if (fiatCurrencyCode === 'USD') convertedValue = +amount;
+        if (fiatCurrencyCode === "USD") convertedValue = +amount;
         else {
-            convertedValue = await convertToCurrency(fiatCurrencyCode, amount, 'sell');
+            convertedValue = await convertToCurrency(
+                fiatCurrencyCode,
+                amount,
+                "sell"
+            );
 
             if (!convertedValue.success) {
-                console.log('Fixer API Error:', convertedValue.error);
+                console.log("Fixer API Error:", convertedValue.error);
                 return res.status(400).json({ error: convertedValue.error.info });
             }
             convertedValue = convertedValue.result;
         }
 
-        let cryptoMetaData = await TokenMetadata.findOne({ address: cryptoCurrencyAddress });
+        let cryptoMetaData = await TokenMetadata.findOne({
+            address: cryptoCurrencyAddress,
+        });
 
-        // convertedValue = convertedValue.result - 3;
-        // convertedValue = convertedValue - (convertedValue * 2.5) / 100;
-
-        if (cryptoMetaData.chain.toLowerCase() === 'bsc') {
-            const { USDT_MINT, token_MINT } = get1InchTokens(cryptoCurrencyAddress);
-            let quote;
-            if (cryptoMetaData.symbol === 'USDT') {
-                quote = 1;
-            } else {
-                const amountWithDecimal = getAmountWithDecimals(cryptoMetaData, '1');
-                quote = await get1InchQuote(
-                    token_MINT,
-                    USDT_MINT,
-                    amountWithDecimal,
-                    slippage,
-                    cryptoMetaData.decimals,
-                    'buy',
-                );
-            }
-            return res.status(200).json({
-                market: `${cryptoMetaData.symbol}-USD`,
-                avgPrice: quote,
-                slippage: '2.5%',
-                quote: formatDecimal((convertedValue - settings.adminFee) / quote),
-                paymentMethod: fiatCurrencyCode,
-                gasFee: settings.adminFee,
-                totalLocal: amount,
-                totalUSD: formatDecimal(convertedValue),
-                exchangeRate: formatDecimal(amount / convertedValue),
-            });
-        } else if (cryptoMetaData.chain.toLowerCase() === 'sol') {
-            const { USDT_MINT, token_MINT } = getSolanaTokens(cryptoCurrencyAddress);
-            let quote;
-            if (cryptoMetaData.symbol === 'USDT') {
-                quote = 1;
-            } else {
-                const amountWithDecimal = getAmountWithDecimals(cryptoMetaData, '1');
-                quote = await getSolanaQuote(token_MINT, USDT_MINT, amountWithDecimal, slippage);
-                // if (cryptoMetaData.symbol === 'SOL')
-                quote = ethers.utils.formatUnits(quote.outAmount, 6);
-                // else quote = quote.outAmount;
-            }
-
-            return res.status(200).json({
-                market: `${cryptoMetaData.symbol}-USD`,
-                avgPrice: quote,
-                slippage: '2.5%',
-                quote: formatDecimal((convertedValue - settings.adminFee) / quote),
-                paymentMethod: fiatCurrencyCode,
-                gasFee: settings.adminFee,
-                totalLocal: amount,
-                totalUSD: formatDecimal(convertedValue),
-                exchangeRate: formatDecimal(amount / convertedValue),
-            });
-        } else if (cryptoMetaData.chain.toLowerCase() === 'btc') {
-            // For Bitcoin, use coinMarketCapConvertBTC to get the quote
-            // Assuming BTC ID is 1 and USD ID is 2781
-            let btcPrice = await coinMarketCapConvertBTC(825, 1, 1); // Get price of 1 BTC in USD
-
-            return res.status(200).json({
-                market: `${cryptoMetaData.symbol}-USD`,
-                avgPrice: btcPrice,
-                slippage: '2.5%',
-                quote: formatDecimal((convertedValue - settings.adminFee) / btcPrice),
-                paymentMethod: fiatCurrencyCode,
-                gasFee: settings.adminFee,
-                totalLocal: amount,
-                totalUSD: formatDecimal(convertedValue),
-                exchangeRate: formatDecimal(amount / convertedValue),
-            });
+        const { USDT_MINT, token_MINT } = getSolanaTokens(cryptoCurrencyAddress);
+        let quote;
+        if (cryptoMetaData.symbol === "USDT") {
+            quote = 1;
         } else {
-            return res.status(404).json({ error: 'chain not found in db' });
+            const amountWithDecimal = getAmountWithDecimals(cryptoMetaData, "1");
+            quote = await getSolanaQuote(
+                token_MINT,
+                USDT_MINT,
+                amountWithDecimal,
+                slippage
+            );
+
+            quote = ethers.utils.formatUnits(quote.outAmount, 6);
         }
+
+        return res.status(200).json({
+            market: `${cryptoMetaData.symbol}-USD`,
+            avgPrice: quote,
+            slippage: "2.5%",
+            quote: formatDecimal((convertedValue - settings.adminFee) / quote),
+            paymentMethod: fiatCurrencyCode,
+            gasFee: settings.adminFee,
+            totalLocal: amount,
+            totalUSD: formatDecimal(convertedValue),
+            exchangeRate: formatDecimal(amount / convertedValue),
+        });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
@@ -345,109 +291,69 @@ router.get('/buy', async (req, res) => {
  *                   type: string
  *                   example: 'Internal Server Error'
  */
-router.get('/sell', async (req, res) => {
+router.get("/sell", async (req, res) => {
     const { fiatCurrencyCode, amount, cryptoCurrencyAddress } = req.query;
-    const slippage = '20';
+    const slippage = "20";
 
     if (!fiatCurrencyCode || !amount || !cryptoCurrencyAddress) {
-        return res
-            .status(400)
-            .json({ error: 'Currency code, amount, chain and cryptoCurrencyAddress are required' });
+        return res.status(400).json({
+            error:
+                "Currency code, amount, chain and cryptoCurrencyAddress are required",
+        });
     }
 
     try {
         // Get settings for dynamic admin fee
         const settings = await getSettings();
-        
+
         let convertedValue;
-        if (fiatCurrencyCode === 'USD') convertedValue = amount;
+        if (fiatCurrencyCode === "USD") convertedValue = amount;
         else {
-            convertedValue = await convertToCurrency(fiatCurrencyCode, amount, 'sell');
+            convertedValue = await convertToCurrency(
+                fiatCurrencyCode,
+                amount,
+                "sell"
+            );
 
             if (!convertedValue.success) {
-                console.log('Fixer API Error:', convertedValue.error);
+                console.log("Fixer API Error:", convertedValue.error);
                 return res.status(400).json({ error: convertedValue.error.info });
             }
             convertedValue = convertedValue.result;
         }
-        let cryptoMetaData = await TokenMetadata.findOne({ address: cryptoCurrencyAddress });
+        let cryptoMetaData = await TokenMetadata.findOne({
+            address: cryptoCurrencyAddress,
+        });
 
-        // convertedValue = convertedValue.result - 3;
-        // convertedValue = convertedValue - (convertedValue * 2.5) / 100;
-
-        if (cryptoMetaData.chain.toLowerCase() === 'bsc') {
-            const { USDT_MINT, token_MINT } = get1InchTokens(cryptoCurrencyAddress);
-            let quote;
-            if (cryptoMetaData.symbol === 'USDT') {
-                quote = 1;
-            } else {
-                const amountWithDecimal = getAmountWithDecimals(cryptoMetaData, '1');
-                quote = await get1InchQuote(
-                    token_MINT,
-                    USDT_MINT,
-                    amountWithDecimal,
-                    slippage,
-                    cryptoMetaData.decimals,
-                    'buy',
-                );
-            }
-            return res.status(200).json({
-                market: `${cryptoMetaData.symbol}-USD`,
-                avgPrice: quote,
-                slippage: '2.5%',
-                quote: formatDecimal((+convertedValue + settings.adminFee) / quote),
-                paymentMethod: fiatCurrencyCode,
-                gasFee: settings.adminFee,
-                totalLocal: amount,
-                totalUSD: formatDecimal(+convertedValue + settings.adminFee),
-                exchangeRate: formatDecimal(amount / convertedValue),
-            });
-        } else if (cryptoMetaData.chain.toLowerCase() === 'sol') {
-            const { USDT_MINT, token_MINT } = getSolanaTokens(cryptoCurrencyAddress);
-            let quote;
-            if (cryptoMetaData.symbol === 'USDT') {
-                quote = 1;
-            } else {
-                const amountWithDecimal = getAmountWithDecimals(cryptoMetaData, '1');
-                quote = await getSolanaQuote(token_MINT, USDT_MINT, amountWithDecimal, slippage);
-
-                // if (cryptoMetaData.symbol === 'SOL')
-                quote = ethers.utils.formatUnits(quote.outAmount, 6);
-                // else quote = quote.outAmount;
-            }
-            return res.status(200).json({
-                market: `${cryptoMetaData.symbol}-USD`,
-                avgPrice: quote,
-                slippage: '2.5%',
-                quote: formatDecimal((+convertedValue + settings.adminFee) / quote),
-                paymentMethod: fiatCurrencyCode,
-                gasFee: settings.adminFee,
-                totalLocal: amount,
-                totalUSD: formatDecimal(+convertedValue + settings.adminFee),
-                exchangeRate: formatDecimal(amount / convertedValue),
-            });
-        } else if (cryptoMetaData.chain.toLowerCase() === 'btc') {
-            // For Bitcoin, use coinMarketCapConvertBTC to get the quote
-            // Assuming BTC ID is 1 and USD ID is 2781
-            let btcPrice = await coinMarketCapConvertBTC(825, 1, 1); // Get price of 1 BTC in USD
-
-            return res.status(200).json({
-                market: `${cryptoMetaData.symbol}-USD`,
-                avgPrice: btcPrice,
-                slippage: '2.5%',
-                quote: formatDecimal((+convertedValue + settings.adminFee) / btcPrice),
-                paymentMethod: fiatCurrencyCode,
-                gasFee: settings.adminFee,
-                totalLocal: amount,
-                totalUSD: formatDecimal(+convertedValue + settings.adminFee),
-                exchangeRate: formatDecimal(amount / convertedValue),
-            });
+        const { USDT_MINT, token_MINT } = getSolanaTokens(cryptoCurrencyAddress);
+        let quote;
+        if (cryptoMetaData.symbol === "USDT") {
+            quote = 1;
         } else {
-            return res.status(404).json({ error: 'chain not found in db' });
+            const amountWithDecimal = getAmountWithDecimals(cryptoMetaData, "1");
+            quote = await getSolanaQuote(
+                token_MINT,
+                USDT_MINT,
+                amountWithDecimal,
+                slippage
+            );
+
+            quote = ethers.utils.formatUnits(quote.outAmount, 6);
         }
+        return res.status(200).json({
+            market: `${cryptoMetaData.symbol}-USD`,
+            avgPrice: quote,
+            slippage: "2.5%",
+            quote: formatDecimal((+convertedValue + settings.adminFee) / quote),
+            paymentMethod: fiatCurrencyCode,
+            gasFee: settings.adminFee,
+            totalLocal: amount,
+            totalUSD: formatDecimal(+convertedValue + settings.adminFee),
+            exchangeRate: formatDecimal(amount / convertedValue),
+        });
     } catch (error) {
         console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+        return res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
@@ -630,15 +536,10 @@ router.post('/create', async (req, res) => {
                 totalUSD: totalUSD,
             };
         } else {
-            let receiverAddress;
-            if (cryptoMetaData.chain === 'BSC') {
-                receiverAddress = await evm(quoteCount);
-            } else if (cryptoMetaData.chain === 'SOL') {
+            
                 const { PublicKey } = await solGenerate(quoteCount);
-                receiverAddress = PublicKey;
-            } else if (cryptoMetaData.chain === 'BTC') {
-                receiverAddress = await BTCWallet(quoteCount);
-            }
+               let receiverAddress = PublicKey;
+          
             createdQuoteParams = {
                 amountIn: amountIn,
                 amountOut: amountOut,
@@ -787,131 +688,12 @@ router.get('/get/:id', async (req, res) => {
                 message: 'transaction completed successfully',
                 quote: quote,
             });
-        } else if (quote.status === 'swapping') {
-            if (cryptoMetaData.chain === 'BSC') {
-                const amountWithDecimal = getAmountWithDecimals(
-                    cryptoMetaData,
-                    quote.amountOut.toString(),
-                );
-
-                const swapParams = {
-                    src: '0x55d398326f99059fF775485246999027B3197955',
-                    dst: quote.tokenAddress,
-                    amount: amountWithDecimal.toString(),
-                    from: signerAdmin.address,
-                    slippage: 1,
-                    disableEstimate: false, // Set to true to disable estimation of swap details
-                    allowPartialFill: false, // Set to true to allow partial filling of the swap order
-                };
-
-                const swapHash = await swapOneInch(swapParams);
-                if (swapHash) {
-                    quote.status = 'pending';
-                    quote.swapHash = swapHash;
-                    quote.save();
-                    return res.status(200).json({
-                        message: 'amount swapped',
-                        quote: quote,
-                    });
-                } else {
-                    return res.status(200).json({
-                        message: 'trying again',
-                        quote: quote,
-                    });
-                }
-            } else if (cryptoMetaData.chain === 'SOL') {
-                const usdtPublicKey = new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB');
-                const tokenPublicKey = new PublicKey(quote.tokenAddress);
-                const amount = parseUnits(quote.amountOut, cryptoMetaData.decimals);
-                let swapHash = await swapSolana(
-                    usdtPublicKey,
-                    tokenPublicKey,
-                    amount,
-                    1,
-                    walletSolAdmin,
-                    sol_connection,
-                );
-                if (swapHash) {
-                    quote.status = 'pending';
-                    quote.swapHash = swapHash;
-                    quote.save();
-                    return res.status(200).json({
-                        message: 'amount swapped',
-                        quote: quote,
-                    });
-                } else {
-                    return res.status(200).json({
-                        message: 'trying again',
-                        quote: quote,
-                    });
-                }
-            }
-        }
+        } 
 
         const signer = generateSigner(quote.count);
 
         if (quote.transactionType === 'buy') {
-            if (cryptoMetaData.chain === 'BSC') {
-                let txHash;
-
-                if (cryptoMetaData.symbol === 'BNB') {
-                    const balance = await checkBNBBalance(signerAdmin);
-                    if (+balance >= +quote.amountOut) {
-                        txHash = await nativeTransfer(
-                            quote.amountOut,
-                            quote.userAddress,
-                            signerAdmin,
-                        );
-                    } else {
-                        quote.status = 'swapping';
-                        quote.save();
-
-                        return res.status(200).json({
-                            message: 'swapping amount',
-                            quote: quote,
-                        });
-                    }
-                } else {
-                    const balance = await checkTokenBalance(
-                        quote.tokenAddress,
-                        cryptoMetaData.decimals,
-                        signerAdmin,
-                    );
-
-                    if (+balance >= +quote.amountOut) {
-                        txHash = await transferTokens(
-                            quote.tokenAddress,
-                            quote.amountOut,
-                            quote.userAddress,
-                            cryptoMetaData.decimals,
-                            signerAdmin,
-                        );
-                    } else {
-                        quote.status = 'swapping';
-                        quote.save();
-
-                        return res.status(200).json({
-                            message: 'swapping amount',
-                            quote: quote,
-                        });
-                    }
-                }
-
-                if (txHash) {
-                    quote.txhash = txHash;
-                    quote.status = 'completed';
-                    quote.save();
-                    return res.status(200).json({
-                        message: 'transaction is completed',
-                        quote: quote,
-                    });
-                } else {
-                    return res.status(200).json({
-                        message: 'trying again',
-                        quote: quote,
-                    });
-                }
-            } else if (cryptoMetaData.chain === 'SOL') {
+            
                 let txHash;
                 const tokenPublicKey = new PublicKey(quote.tokenAddress);
                 const balance = await getTokenBalancesSol(
@@ -966,103 +748,9 @@ router.get('/get/:id', async (req, res) => {
                         quote: quote,
                     });
                 }
-            } else if (cryptoMetaData.chain === 'BTC') {
-                let txHash;
-
-                txHash = await btcTransfer(quote.userAddress, quote.amountOut);
-                if (txHash) {
-                    quote.txhash = txHash;
-                    quote.status = 'completed';
-                    quote.save();
-                    return res.status(200).json({
-                        message: 'transaction is completed',
-                        quote: quote,
-                    });
-                } else {
-                    return res.status(200).json({
-                        message: 'trying again',
-                        quote: quote,
-                    });
-                }
-            }
+            
         } else if (quote.transactionType === 'sell') {
-            if (cryptoMetaData.chain === 'BSC') {
-                let txHash;
-
-                if (cryptoMetaData.symbol === 'BNB') {
-                    let balance = await checkBNBBalance(signer);
-                    console.log(' -----------------');
-                    console.log(' balance:', balance);
-                    console.log(' -----------------');
-
-                    if (+balance >= +quote.amountIn) {
-                        balance = await removeGasFeeFromBalance(balance, signer);
-                        console.log(' -----------------');
-                        console.log(' balance:', balance);
-                        console.log(' -----------------');
-
-                        balance = Number(balance).toFixed(6);
-                        console.log(' -----------------');
-                        console.log(' balance:', balance);
-                        console.log(' -----------------');
-                        txHash = await nativeTransfer(balance, signerAdmin.address, signer);
-                    } else {
-                        return res.status(200).json({
-                            message: 'waiting for transfer',
-                            quote: quote,
-                        });
-                    }
-                } else {
-                    const balance = await checkTokenBalance(
-                        quote.tokenAddress,
-                        cryptoMetaData.decimals,
-                        signer,
-                    );
-
-                    if (+balance >= +quote.amountIn) {
-                        if (quote.status === 'processing') {
-                            txHash = await transferTokens(
-                                quote.tokenAddress,
-                                balance,
-                                signerAdmin.address,
-                                cryptoMetaData.decimals,
-                                signer,
-                            );
-                        } else {
-                            const transStatus = transferGasFeeTorecepient(
-                                balance,
-                                signerAdmin,
-                                quote.receiverAddress,
-                                quote.tokenAddress,
-                                cryptoMetaData.decimals,
-                            );
-                            if (transStatus) {
-                                quote.status = 'processing';
-                                quote.save();
-                                return res.status(200).json({
-                                    message: 'gas fee transfered to transfer wallet',
-                                    quote: quote,
-                                });
-                            } else {
-                                return res.status(200).json({
-                                    message: 'error transfering gas fee to transfer wallet',
-                                    quote: quote,
-                                });
-                            }
-                        }
-                    }
-                }
-
-                if (txHash) {
-                    quote.txhash = txHash;
-                    quote.status = 'completed';
-                    quote.save();
-                    return res.status(200).json({
-                        message: 'transaction is completed',
-                        quote: quote,
-                    });
-                }
-            } else if (cryptoMetaData.chain === 'SOL') {
+        
                 let txHash;
                 const tokenPublicKey = new PublicKey(quote.tokenAddress);
                 const { PrivateKey: privKey } = await solGenerate(quote.count);
@@ -1141,30 +829,7 @@ router.get('/get/:id', async (req, res) => {
                         quote: quote,
                     });
                 }
-            } else if (cryptoMetaData.chain === 'BTC') {
-                const balance = await btcconfirmTransfer(quote.receiverAddress);
-                console.log('balance:', balance);
-
-                let txHash;
-                if (+balance >= +quote.amountIn) {
-                    txHash = await btcMidTransfer(quote.count);
-                } else {
-                    return res.status(200).json({
-                        message: 'waiting for transfer',
-                        quote: quote,
-                    });
-                }
-
-                if (txHash) {
-                    quote.txhash = txHash;
-                    quote.status = 'completed';
-                    quote.save();
-                    return res.status(200).json({
-                        message: 'transaction is completed',
-                        quote: quote,
-                    });
-                }
-            }
+            
         }
         return res.status(200).json({
             message: 'transaction is pending',
@@ -1191,7 +856,7 @@ router.get('/get/:id', async (req, res) => {
  *       - in: query
  *         name: chain
  *         required: true
- *         description: The blockchain of the address (e.g., SOL, BSC)
+ *         description: The blockchain of the address (e.g., SOL)
  *         schema:
  *           type: string
  *     responses:
@@ -1223,20 +888,7 @@ router.get('/check-address', (req, res) => {
         return res.status(400).json({ error: 'Address and chain are required' });
     }
 
-    let isValid = false;
-    if (chain.toLowerCase() === 'sol') {
-        isValid = isValidSolanaAddress(address);
-    } else if (chain.toLowerCase() === 'bsc') {
-        isValid = isValidEvm(address);
-    } else if (chain.toLowerCase() === 'btc') {
-        try {
-            bitcoin.address.toOutputScript(address);
-            isValid = true;
-        } catch (error) {
-            console.log(error.message, 'error');
-            isValid = false;
-        }
-    }
+    let isValid = isValidSolanaAddress(address);
 
     if (isValid) {
         return res.status(200).json({ valid: true });
