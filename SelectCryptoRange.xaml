@@ -1,0 +1,55 @@
+﻿<Window x:Class="MobileWallet.Desktop.SelectCryptoRange"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        WindowStyle="None"
+        Closing="SelectCryptoRange_OnClosing"
+        Loaded="SelectCryptoRange_OnLoaded"
+        mc:Ignorable="d"
+        Title="SelectCryptoRange" Height="1600" Width="900" WindowState="Maximized">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150" />
+            <RowDefinition Height="150" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="3" Stretch="Fill" Source="./images/back-drop.png " />
+        <Image Grid.Row="0" Width="250" Source="./images/logo.png" />
+        <TextBlock Name="MyHeader" HorizontalAlignment="Center" Grid.Row="1" Margin="0 20 0 0" FontWeight="Bold"
+                   Foreground="#ffffff" FontSize="50" TextWrapping="Wrap" Text="How much do you want to buy/sell?" />
+        <Border Margin="0 180 20 0" HorizontalAlignment="Right" Grid.Row="0" Grid.RowSpan="3" BorderBrush="#5387FC"
+                BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10">
+            <Button Margin="0 0 0 0" Name="BtnBuyAbove" BorderThickness="0" Background="Transparent" Foreground="#5387FC"
+                    FontWeight="DemiBold" FontSize="25"
+                    Click="Button_Click_Above">
+                Sell Above 10,000 XAF
+            </Button>
+        </Border>
+        <Border Margin="0 450 20 0" HorizontalAlignment="Right" Grid.Row="0" Grid.RowSpan="3" BorderBrush="#5387FC"
+                BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10">
+            <Button Margin="0 0 0 0" Name="BtnBuyBelow" BorderThickness="0" Background="Transparent"
+                    Foreground="#5387FC" FontWeight="DemiBold" FontSize="25"
+                    Click="Button_Click_Below">
+                Sell Below 10,000 XAF
+            </Button>
+        </Border>
+        <Border Margin="20 180 0 0" HorizontalAlignment="Left" Grid.Row="0" Grid.RowSpan="3" BorderBrush="#5387FC"
+                BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10">
+            <Button Margin="0 0 0 0" Name="Back" BorderThickness="0" Background="Transparent" Foreground="#5387FC"
+                    FontWeight="DemiBold" FontSize="35"
+                    Click="Button_Click_Back">
+                Back
+            </Button>
+        </Border>
+        <Border Margin="20 450 0 0" HorizontalAlignment="Left" Grid.Row="0" Grid.RowSpan="3" BorderBrush="#FC5353"
+                BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10">
+            <Button Margin="0 0 0 0" Name="Cancel" BorderThickness="0" Background="Transparent" FontWeight="DemiBold"
+                    Foreground="#FC5353" FontSize="35"
+                    Click="Button_Click_Cancel">
+                Cancel
+            </Button>
+        </Border>
+    </Grid>
+</Window>

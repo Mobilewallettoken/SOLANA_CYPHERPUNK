@@ -10,7 +10,7 @@ public class Global
     // public const string BaseUrl = "https://localhost:5001/";
 
  
-    public const string BaseUrl = "https://api.wallet2cash.com/";
+    public const string BaseUrl = "https://localhost:5001/";
 
 
     public static string DefaultLanguage { get; set; } = "English";
@@ -22,5 +22,12 @@ public class Global
     public static bool IsCryptoAbove { get; set; } = false;
     public static CryptoNetworkDto SelectedNetwork { get; set; } = null;
     public static string UserAddress { get; set; } = "";
+
+
+        public static TimeSpan CryptoWithdrawWaitTime = TimeSpan.FromMinutes(5);
+    public static string DefaultLanguage { get; set; } = "English";
+    public static string CurrentAccountNumber = "";
+    public static CryptoTokenDto SelectedToken { get; set; } = null;
+    public static AtmProfileDto Profile { get; set; } = null;
 
 }

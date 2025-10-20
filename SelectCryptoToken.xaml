@@ -1,0 +1,103 @@
+﻿<Window x:Class="MobileWallet.Desktop.SelectCryptoToken"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:MobileWallet.Desktop"
+        mc:Ignorable="d"
+        Closing="SelectCryptoToken_OnClosing"
+        Loaded="SelectCryptoToken_OnLoaded"
+        WindowStyle="None"
+        Title="SelectCryptoToken" Height="1600" Width="900" WindowState="Maximized">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="150" />
+            <RowDefinition Height="150" />
+            <RowDefinition Height="470" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Image Grid.Column="0" Grid.Row="0" Grid.RowSpan="4" Stretch="Fill" Source="./images/back-drop.png " />
+        <Image Grid.Row="0" Width="250" Source="./images/logo.png" />
+        <TextBlock Name="MyHeader" HorizontalAlignment="Center" Grid.Row="1" Margin="0 20 0 0" FontWeight="Bold"
+                   Foreground="#ffffff" FontSize="50" TextWrapping="Wrap" Text="Select Crypto Type" />
+        <ItemsControl Name="CryptoTokenItemControl"
+                      VerticalAlignment="Center"
+                      Margin="0 0 0 0"
+                      Grid.Row="2" HorizontalAlignment="Right">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Margin="0 0 20 50" BorderBrush="#5387FC" BorderThickness="4" Width="280"
+                            Background="#ffffff" Height="80" CornerRadius="10">
+                        <Button
+                            Tag="{Binding}"
+                            VerticalContentAlignment="Center" HorizontalContentAlignment="Left" BorderThickness="0"
+                            Background="Transparent" Foreground="#5387FC" FontSize="35" FontWeight="DemiBold"
+                            Margin="20 0 0 0" Click="BtnSelectCryptoToken_Click">
+                            <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Left">
+                                <Image Source="{Binding Icon}" Width="50" Height="50" Margin="0 0 10 0" />
+                                <TextBlock VerticalAlignment="Center" Text="{Binding Symbol}" />
+                            </WrapPanel>
+                        </Button>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        <!-- <Border Name="BtnMtn" Margin="0 180 20 0" HorizontalAlignment="Right" Grid.Row="0" Grid.RowSpan="3" BorderBrush="#5387FC" BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10" > -->
+        <!--     <Button VerticalContentAlignment="Center" HorizontalContentAlignment="Left" Name="MtnMoney" BorderThickness="0" Background="Transparent" Foreground="#5387FC" FontSize="35" FontWeight="DemiBold" Margin="20 0 0 0" -->
+        <!--             Click="Button_Click_MTN"  > -->
+        <!--         <WrapPanel VerticalAlignment="Center" HorizontalAlignment="Left"> -->
+        <!--             <Image Source="/images/mtn.jpg" /> -->
+        <!--             <TextBlock VerticalAlignment="Center" Name="MtnMoneyContent">Momo</TextBlock> -->
+        <!--         </WrapPanel> -->
+        <!--     </Button> -->
+        <!-- </Border> -->
+        <!-- <Border  Name="BtnOrange" Visibility="Visible" Margin="0 450 20 0" HorizontalAlignment="Right"  Grid.Row="0" Grid.RowSpan="3" BorderBrush="#5387FC" BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10" > -->
+        <!--     <Button HorizontalContentAlignment="Left" Name="OrangeMoney" BorderThickness="0" Background="Transparent" Foreground="#5387FC" FontSize="35" FontWeight="DemiBold" Margin="20 0 0 0" -->
+        <!--             Click="Button_Click_Orange"  > -->
+        <!--         <WrapPanel HorizontalAlignment="Left"> -->
+        <!--             <Image Source="/images/orange.png" /> -->
+        <!--             <TextBlock VerticalAlignment="Center" Name="OrangeMoneyContent">Orange</TextBlock> -->
+        <!--         </WrapPanel> -->
+        <!--     </Button> -->
+        <!--     ~1~ <WrapPanel> @1@ -->
+        <!--     ~1~     <Button Name="OrangeMoney" BorderThickness="0" Background="Transparent" Foreground="#5387FC" FontSize="35" FontWeight="DemiBold" Margin="20 0 0 0" @1@ -->
+        <!--     ~1~             Click="Button_Click_Orange"  > @1@ -->
+        <!--     ~1~         Orange @1@ -->
+        <!--     ~1~     </Button> @1@ -->
+        <!--     ~1~ </WrapPanel> @1@ -->
+        <!-- </Border> -->
+        <!-- <Border  Name="BtnCrypto" Visibility="Visible" Margin="0 720 20 0" HorizontalAlignment="Right"  Grid.Row="0" Grid.RowSpan="3" BorderBrush="#5387FC" BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10" > -->
+        <!--     <Button HorizontalContentAlignment="Left" Name="CryptoMoney" BorderThickness="0" Background="Transparent" Foreground="#5387FC" FontSize="35" FontWeight="DemiBold" Margin="20 0 0 0" -->
+        <!--             Click="Button_Click_Crypto"  > -->
+        <!--         <WrapPanel HorizontalAlignment="Left"> -->
+        <!--             <Image Source="/images/crypto.jpg" /> -->
+        <!--             <TextBlock VerticalAlignment="Center" Name="CryptoMoneyContent">Crypto</TextBlock> -->
+        <!--         </WrapPanel> -->
+        <!--     </Button> -->
+        <!-- </Border> -->
+        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="2">
+            <Border Margin="20 0 0 0" HorizontalAlignment="Left" Grid.Row="0" Grid.RowSpan="3" BorderBrush="#5387FC"
+               BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10">
+                <Button Name="Back" BorderThickness="0" Background="Transparent" Foreground="#5387FC" FontWeight="DemiBold"
+                   FontSize="35"
+                   Click="Button_Click_Back" Height="72" VerticalAlignment="Top">
+                    Back
+                </Button>
+            </Border>
+            <Border Margin="20 50 0 0" HorizontalAlignment="Left" Grid.Row="0" Grid.RowSpan="3" BorderBrush="#FC5353"
+               BorderThickness="4" Width="280" Background="#ffffff" Height="80" CornerRadius="10">
+                <Button Margin="0 0 0 0" Name="Cancel" BorderThickness="0" Background="Transparent" FontWeight="DemiBold"
+                   Foreground="#FC5353" FontSize="35"
+                   Click="Button_Click_Cancel">
+                    Cancel
+                </Button>
+            </Border>
+
+        </StackPanel>
+     </Grid>
+</Window>

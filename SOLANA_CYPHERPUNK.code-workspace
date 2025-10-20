@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "SOLANA_CYPHERPUNK",
+			"path": "."
+		},
+		{
+			"name": "Client",
+			"path": "../ATM/MobileWallet.Desktop/Client"
+		}
+	],
+	"settings": {}
+}
