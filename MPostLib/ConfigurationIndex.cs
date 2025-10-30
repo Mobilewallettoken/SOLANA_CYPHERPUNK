@@ -1,0 +1,37 @@
+﻿// Decompiled with JetBrains decompiler
+// Type: MPOST.ConfigurationIndex
+// Assembly: MPOST, Version=3.0.9.1, Culture=neutral, PublicKeyToken=null
+// MVID: F8C15F18-2FEE-452E-9333-842EC1A1B67F
+// Assembly location: C:\Users\hhala\Downloads\MPOST.dll
+
+using System.Runtime.InteropServices;
+
+namespace MobileWallet.Desktop.MPostLib
+{
+  [Guid("8CE9C1DC-E1BE-49E3-A974-6D32A2823766")]
+  [ComVisible(true)]
+  public enum ConfigurationIndex
+  {
+    VOUCHER_MODE = 0,
+    STACKER_CONFIGURATION = 1,
+    MAX_BNF_REJECTS = 2,
+    PASSIVE_RUN_AND_STACK = 4,
+    FOUR_WAY_BARCODE_INHIBIT = 6,
+    COMPATIBILITY_MODE_ENABLED = 7,
+    CLASSIFICATION_TYPE = 8,
+    IMPROPERLY_SEATED_HEAD = 9,
+    NOTE_AUTO_INHIBIT = 10, // 0x0000000A
+    OUT_OF_ORDER_FOR_HANGING_NOTE = 11, // 0x0000000B
+    TICKET_TRANSPERENCY_THRESHOLD = 12, // 0x0000000C
+    BASCODE_SIZE_CONVERSION = 13, // 0x0000000D
+    OEM_CONFIGURATION_OPTION = 14, // 0x0000000E
+    SECURITY_MODE = 15, // 0x0000000F
+    MULTI_NOTE_ESCROW_STORAGE_SIZE = 16, // 0x00000010
+    BNF_JAM_IMPROVEMENT_MODE = 17, // 0x00000011
+    MDR_MODE = 18, // 0x00000012
+    SEMI_ATTENDED_MODE = 19, // 0x00000013
+    LOTTERY_TICKET_MODE = 20, // 0x00000014
+    RECYCLER_1_FILL_LEVEL = 21, // 0x00000015
+    RECYCLER_2_FILL_LEVEL = 22, // 0x00000016
+  }
+}
