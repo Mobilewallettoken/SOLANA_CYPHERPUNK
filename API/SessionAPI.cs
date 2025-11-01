@@ -240,7 +240,7 @@ public partial class SessionClient
                             var objectResponse_ = await ReadObjectResponseAsync<GetAppSessionsResponseModel>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                throw new ApiException("An unexpected event occured. Please contact the admin.", status_, objectResponse_.Text, headers_, null);
                             }
                             return objectResponse_.Object;
                         }
